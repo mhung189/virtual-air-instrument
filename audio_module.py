@@ -1,5 +1,8 @@
-#Module: audio_module.py
-
+"""
+Module: audio_module.py
+Phụ trách: Thành viên 2
+Nhiệm vụ: Tổng hợp âm thanh 24 nốt (C3 -> B4), điều khiển lực gõ và chế độ ngân Sustain.
+"""
 
 import numpy as np
 import pygame
@@ -12,7 +15,7 @@ def midi_to_freq(midi_num):
 
 
 def generate_piano_note(freq, duration=2.4, sample_rate=44100):
-    """Tổng hợp âm thanh Grand Piano bằng 6 tầng sóng hài(Harmonic Synthesis) và đường bao ADSR."""
+    """Tổng hợp âm thanh Grand Piano bằng 6 tầng sóng hài và đường bao ADSR."""
     t = np.linspace(0, duration, int(sample_rate * duration), False)
     wave = (
         1.00 * np.sin(2 * np.pi * freq * t)
