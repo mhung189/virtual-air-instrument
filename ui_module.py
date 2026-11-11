@@ -4,7 +4,7 @@ Phụ trách: Thành viên 4
 Nhiệm vụ: Thiết kế giao diện Chơi Tự Do (Free Play) & Luyện Tập (Wait Mode - Chờ nốt),
           dãn phím 1.5x, chỉnh vị trí đàn và độ trong suốt mặc định 50%.
 """
-
+import os
 import pygame
 from utils import (
     BLACK_KEY_BINDINGS,
@@ -20,46 +20,33 @@ KEY_SCALE_Y = 1.5  # Hệ số dãn phím theo chiều dọc (1.5 lần)
 FALL_SPEED = 165.0  # Tốc độ nốt nhạc rơi xuống (pixels / giây)
 
 # Danh sách các bản nhạc mẫu cho Chế độ Luyện tập: (thời_điểm_giây, tên_nốt)
-PRACTICE_SONGS = [
-    {
-        "title": "Twinkle Star",
-        "notes": [
-            (1.0, "C4"), (1.6, "C4"), (2.2, "G4"), (2.8, "G4"), (3.4, "A4"), (4.0, "A4"), (4.6, "G4"),
-            (5.5, "F4"), (6.1, "F4"), (6.7, "E4"), (7.3, "E4"), (7.9, "D4"), (8.5, "D4"), (9.1, "C4"),
-            (10.0, "G4"), (10.6, "G4"), (11.2, "F4"), (11.8, "F4"), (12.4, "E4"), (13.0, "E4"), (13.6, "D4"),
-            (14.5, "G4"), (15.1, "G4"), (15.7, "F4"), (16.3, "F4"), (16.9, "E4"), (17.5, "E4"), (18.1, "D4"),
-            (19.0, "C4"), (19.6, "C4"), (20.2, "G4"), (20.8, "G4"), (21.4, "A4"), (22.0, "A4"), (22.6, "G4"),
-            (23.5, "F4"), (24.1, "F4"), (24.7, "E4"), (25.3, "E4"), (25.9, "D4"), (26.5, "D4"), (27.1, "C4"),
-        ],
-    },
-    {
-        "title": "Ode to Joy",
-        "notes": [
-            (1.0, "E4"), (1.5, "E4"), (2.0, "F4"), (2.5, "G4"), (3.0, "G4"), (3.5, "F4"), (4.0, "E4"), (4.5, "D4"),
-            (5.0, "C4"), (5.5, "C4"), (6.0, "D4"), (6.5, "E4"), (7.0, "E4"), (7.7, "D4"), (8.1, "D4"),
-            (8.9, "E4"), (9.4, "E4"), (9.9, "F4"), (10.4, "G4"), (10.9, "G4"), (11.4, "F4"), (11.9, "E4"), (12.4, "D4"),
-            (12.9, "C4"), (13.4, "C4"), (13.9, "D4"), (14.4, "E4"), (14.9, "D4"), (15.6, "C4"), (16.0, "C4"),
-        ],
-    },
-    {
-        "title": "Jingle Bells",
-        "notes": [
-            (1.0, "E4"), (1.5, "E4"), (2.0, "E4"), (2.8, "E4"), (3.3, "E4"), (3.8, "E4"),
-            (4.6, "E4"), (5.1, "G4"), (5.6, "C4"), (6.1, "D4"), (6.6, "E4"),
-            (7.5, "F4"), (8.0, "F4"), (8.5, "F4"), (9.0, "F4"), (9.5, "F4"), (10.0, "E4"), (10.5, "E4"), (11.0, "E4"),
-            (11.5, "E4"), (12.0, "D4"), (12.5, "D4"), (13.0, "E4"), (13.5, "D4"), (14.3, "G4"),
-        ],
-    },
-    {
-        "title": "Happy Birthday",
-        "notes": [
-            (1.0, "C4"), (1.4, "C4"), (1.9, "D4"), (2.5, "C4"), (3.1, "F4"), (3.7, "E4"),
-            (4.6, "C4"), (5.0, "C4"), (5.5, "D4"), (6.1, "C4"), (6.7, "G4"), (7.3, "F4"),
-            (8.2, "C4"), (8.6, "C4"), (9.1, "C4"), (9.7, "A4"), (10.3, "F4"), (10.9, "E4"), (11.5, "D4"),
-            (12.4, "A#4"), (12.8, "A#4"), (13.3, "A4"), (13.9, "F4"), (14.5, "G4"), (15.1, "F4"),
-        ],
-    },
-]
+def load_practice_songs_from_file(filename="songs.txt"):
+    """Đọc danh sách các bài nhạc mẫu từ file text riêng biệt."""
+    default_songs = [
+        {
+            "title": "Twinkle Star",
+            "notes": [
+                (1.0, "C4"),
+                (1.6, "C4"),
+                (2.2, "G4"),
+            ],
+        }
+    ]
+    if not os.path.exists(filename):
+        return default_songs
+    try:
+        with open(filename, "r", encoding="utf-8") as f:
+            content = f.read()
+            # Chuyển đổi danh sách list nốt [time, note] thành tuple (time, note) cho chuẩn code
+            formatted_songs = eval(content)
+            return formatted_songs if formatted_songs else default_songs
+    except Exception as e:
+        print(f"Lỗi khi đọc file {filename}: {e}")
+        return default_songs
+
+
+# Tải danh sách bài hát từ file songs.txt khi khởi động module
+PRACTICE_SONGS = load_practice_songs_from_file()
 
 
 def build_keyboard_layout(width, height, piano_top=None, scale_y=KEY_SCALE_Y):
